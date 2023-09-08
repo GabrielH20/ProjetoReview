@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center p-2">Atualizar Conta</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form method="post" action="" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="nome">Nome</label>
+                    <input type="text" name="nome" id="nome" class="form-control" value="{{ current_user.nome }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="nome">Nome Usuário</label>
+                    <input type="text" name="nome_usuario" id="nome" class="form-control" value="{{ current_user.nome_usuario }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" class="form-control" value="{{ current_user.email }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="data_aniversario">Data Aniversário</label>
+                    <input type="date" name="data_aniversario" id="data_aniversario" class="form-control" value="{{ current_user.data_aniversario }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="foto_perfil">Foto Perfil</label>
+                    <div class="d-flex align-items-center">
+                        <img src="{{ url_for('static', filename='images/' + current_user.foto_perfil) }}" width="60" height="50" alt="" class="mr-3">
+                        <div class="custom-file">
+                            <input type="file" name="foto_perfil" id="foto_perfil" class="custom-file-input">
+                            <label class="custom-file-label" for="foto_perfil">Escolher nova foto</label>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted">Clique para selecionar uma nova imagem e trocar a atual.</small>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-info">Atualizar Conta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

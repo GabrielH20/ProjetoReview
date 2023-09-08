@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{ url_for('static', filename='/images/' + filme.foto_poster) }}" alt="Poster do Jogo" class="img-fluid">
+        </div>
+        <div class="col-md-8">
+            <h1>Detalhes do Filme: {{ filme.nome }}</h1>
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Nome:</strong> {{ filme.nome }}</li>
+                <li class="list-group-item"><strong>Diretor:</strong> {{ filme.diretor }}</li>
+                <li class="list-group-item"><strong>Data de Lançamento:</strong> {{ filme.data_lancamento }}</li>
+                <li class="list-group-item"><strong>Tempo de Jogo:</strong> {{ filme.duracao }} Minutos</li>
+                <li class="list-group-item"><strong>Categoria:</strong> {{ filme.categoria.nome }}</li>
+                <li class="list-group-item"><strong>Gênero:</strong> {{ filme.generos.nome }}</li>
+                {% if quantidade_analises%}
+                    <li class="list-group-item"><strong>Quantidade Análises:</strong> {{ quantidade_analises }}</li>
+                    <li class="list-group-item"><strong>Nota do Público:</strong> {{ nota_total }} / 100</li>
+                {% else %}
+                    <li class="list-group-item"><strong>Quantidade Análises:</strong> NÃO HÁ ANÁLISES PUBLICADAS</li>
+                    <li class="list-group-item"><strong>Nota do Público:</strong>  NÃO HÁ ANÁLISES PUBLICADAS</li>
+                {% endif %}
+                <li class="list-group-item"><strong>sinopse:</strong> 
+                    <textarea class="form-control" rows="5" readonly>{{ filme.sinopse }}</textarea>
+                </li>
+            </ul>
+            <br>
+            {% if current_user.role == 'Admin' %}
+            <div class="mt-3">
+                <a href="{{ url_for('filme_atualizar', id=filme.id) }}" class="btn btn-primary">Atualizar</a>
+                <a href="{{ url_for('filme_excluir', id=filme.id) }}" class="btn btn-danger ml-2">Excluir</a>
+            {% endif %}
+                <a href="{{ url_for('analise', id_categoria = filme.id_categoria, id = filme.id ) }}" class="btn btn-success ml-2">Avaliar</a>
+                <a href="{{ url_for('home') }}" class="btn btn-secondary ml-2">Voltar</a>
+            
+
+            </div>
+
+            {% if analises %}
+                <div class="container">
+                    <div class="row">
+                        {% for analise in analises %}
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <img src="{{ url_for('static', filename='/images/' + analise.autor_analise.foto_perfil) }}" alt="{{ analise.autor_analise.nome }}" class="img-fluid rounded-circle" height="30" width="30">
+                                            <a href="{{url_for('conta', id = analise.autor_analise.id )}}" class="ml-2 font-weight-bold">{{ analise.autor_analise.nome }}</a>
+                                        </div>
+                                        <h5 class="card-title">Nota: {{ analise.nota }}</h5>
+                                        <p class="card-text">Análise: {{ analise.analise[:300] }}</p>
+                                        <a href="{{url_for('analise_detalhar', id = analise.id )}}" class="btn btn-primary">Detalhar</a>
+                                        {% if analise.id_autor_analise == current_user.id %}
+                                            <a href="{{url_for('analise_editar', id = analise.id)}}" class="btn btn-warning">Editar</a>
+                                            <a href="{{url_for('analise_excluir', id = analise.id )}}" class="btn btn-danger">Excluir</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{url_for('static', filename='/images/' + material.foto_poster)}}" alt="" class="img-fluid" width="330">
+            <h5>Nome: {{material.nome}}</h5>
+            {% if tipo == 'Filme' %}
+                <p class="lead">Sinopse:</p>
+                <p>{{material.sinopse[:50]}}</p>
+                <p>{{material.sinopse[50:100]}}</p>
+            {% else %}
+                <p class="lead">Descrição:</p>
+                <p>{{material.descricao[:50]}}</p>
+                <p>{{material.descricao[50:100]}}...</p>
+            {% endif %}
+            <p><strong>Data de Lançamento:</strong> {{material.data_lancamento}}</p>
+        </div>
+        
+        {% from "_formularioajuda.html" import render_field %}
+
+        <div class="col-md-8">
+            <h5>Análise Edição</h5>
+            <form action="" method="POST">
+
+                {{render_field(form.nota, class="form-control", value=analise.nota)}}
+
+                <div class="form-group">
+                    <label for="Análise">Análise:</label>
+                    <textarea class="form-control" name="analise" id="Análise" rows="20">{{analise.analise}}</textarea>
+                    <p><span id="caracteresRestantes">500</span> caracteres restantes</p>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Atualizar</button>
+                
+                {% if analise.categoria.nome == 'Filmes' %}
+                <a href="{{url_for('filme_unico',id = analise.id_material)}}" class="btn btn-secondary">Voltar</a>
+                {% elif analise.categoria.nome == 'Jogos' %}
+                <a href="{{url_for('jogo_unico',id = analise.id_material)}}" class="btn btn-secondary">Voltar</a>
+                {% endif %}
+                
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    var textarea = document.getElementById('Análise');
+    var caracteresRestantes = document.getElementById('caracteresRestantes');
+    var limiteCaracteres = 2500; 
+
+    textarea.addEventListener('input', function () {
+        var texto = textarea.value;
+        var caracteresDigitados = texto.length;
+
+        if (caracteresDigitados > limiteCaracteres) {
+            textarea.value = texto.slice(0, limiteCaracteres); 
+            caracteresDigitados = limiteCaracteres;
+        }
+
+        var caracteresRestantesCount = limiteCaracteres - caracteresDigitados;
+        caracteresRestantes.textContent = caracteresRestantesCount;
+    });
+</script>
+{% endblock %}

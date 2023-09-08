@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% from "_formularioajuda.html" import render_field %}
+<div class="container mt-4">
+    <a href="{{ url_for('jogos_criar') }}" class="btn btn-primary mb-3">Cadastrar Jogos</a>
+    <div class="row">
+        {% for jogo in jogos %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{{ url_for('static', filename='/images/' + jogo.foto_poster) }}" class="card-img-top" alt="Poster do Filme">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ jogo.nome }}</h4>
+                        <h4 class="card-title">Genero: {{ jogo.generos.nome }}</h4>
+                        <p class="card-text">{{ jogo.descricao[:100] }}...</p>
+                        <p class="card-text"><strong>Desenolvedora:</strong> {{ jogo.desenvolvedora }}...</p>
+                        <a href="{{url_for('jogo_unico',id=jogo.id)}}" class="btn btn-secondary ml-2">Detalhes</a>
+                        <a href="{{url_for('jogos_atualizar',id=jogo.id)}}" class="btn btn-info">Atualizar Jogo</a>
+                        <a href="{{url_for('jogos_excluir', id = jogo.id )}}" class="btn btn-danger ml-2">Excluir Jogo</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <form action="" method="POST" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome:</label>
+            <input type="text" class="form-control" id="nome" name="nome" value="{{genero_filme.nome}}" placeholder="Digite o novo nome do gênero" required>
+            <div class="invalid-feedback">Por favor, preencha o nome.</div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Atualizar</button>
+    </form>
+</div>
+{% endblock %}

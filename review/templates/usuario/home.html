@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>PÁGINA HOME </h2>
+    <br>
+    <div id="tabelaCombinada">
+        <h3> Filmes e Jogos</h3>
+
+        <form action="" method="POST" class="mb-4">
+            <div class="form-group">
+                <label for="filtro_categoria">Filtrar por categoria:</label>
+                <select id="filtro_categoria" name="filtro_categoria" class="form-control">
+                    {% if dados_pesquisa %}
+                        <option value="{{dados_pesquisa.0.0}}">{{dados_pesquisa.0.1}}</option>
+                    {% endif %}
+                    <option value="">Todas as Categorias</option>
+                    {% for categoria in categorias %}
+                        {% if dados_pesquisa %}
+                            {% if categoria.nome  != dados_pesquisa.0.1%}
+                                <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
+                            {% endif %}
+                        {% else %}
+                            <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="filtro_genero">Filtrar por genero:</label>
+                <select id="filtro_genero" name="filtro_genero" class="form-control">
+                    {% if dados_pesquisa %}
+                        <option value="{{dados_pesquisa.1.0}}">{{dados_pesquisa.1.1}}</option>
+                    {% endif %}
+                    <option value="">Todos os Generos</option>
+                    {% for genero in generos %}
+                        {% if dados_pesquisa %}
+                            {% if genero.nome  != dados_pesquisa.1.1%}
+                                    <option value="{{ genero.id }}">{{ genero.nome }}</option>
+                            {% endif %} 
+                        {% else %}
+                            <option value="{{ genero.id }}">{{ genero.nome }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-grou">
+                <label for="filtro_data_lancamento">Filtrar por Data:</label>
+                <select name="filtro_data_lancamento" id="filtro_data_lancamento" class="form-control">
+                    {% if dados_pesquisa == [] %}
+                        <option value="Selecionar Data">Selecionar Data</option>
+                        <option value="Recentes">Recente</option>
+                        <option value="Antigos">Antigos</option>
+                    {% else %}
+
+                        <option value="{{dados_pesquisa.3}}">{{dados_pesquisa.3}}</option>
+                        
+                        {% if dados_pesquisa.3 != 'Selecionar' %}
+                        <option value="Selecionar Data">Selecionar Data</option>
+                        {% endif %}
+                        {% if dados_pesquisa.3 != 'Recentes' %}
+                        <option value="Recentes">Recente</option>
+                        {% endif %}
+                        
+                        {% if dados_pesquisa.3 != 'Antigos' %}
+                        <option value="Antigos">Antigos</option>
+                        {% endif %}
+                        
+                    {% endif %}
+                    
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="filtro_nome">Filtrar por nome:</label>
+                {% if dados_pesquisa %}
+                    <input type="text" id="filtro_nome" name="filtro_nome" class="form-control" value="{{dados_pesquisa.2}}">
+                {% else %}
+                    <input type="text" id="filtro_nome" name="filtro_nome" class="form-control">
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary">Pesquisar</button>
+            <input type="submit" value="Limpar Pesquisa" name="limpar" class="btn btn-secondary">
+        </form>
+
+        {% if dados_pesquisa %}
+            <h4>DADOS PESQUISA: CATEGORIA: {{dados_pesquisa.0.1}} / GÊNERO: {{dados_pesquisa.1.1}} / NOME: {{dados_pesquisa.2}} / LANÇAMENTO: {{dados_pesquisa.3}}</h4>
+            {% if lista_ordenada == [] %}
+            <br>
+                <h3>SEM RESULTADOS</h3>
+            {% endif %}
+        {% endif %}
+        <div class="row">
+            {% for item in lista_ordenada %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{{url_for('static', filename = '/images/' + item.foto_poster)}}" class="card-img-top" alt="Imagem do Filme/Jogo" style="width: 100%; height: 200px;">
+                    <div class="card-body">
+                        {% if item.categoria.nome == 'Filmes' %}
+                            <h5 class="card-title"><strong>Nome do Filme:</strong> {{item.nome}}</h5>
+                            <p class="card-text"><strong>Sinopse:</strong> {{item.sinopse[:100]}}</p>
+                            <p class="card-text"><strong>Data de Lançamento:</strong> {{item.data_lancamento}}</p>
+                            <div class="btn-group" role="group" aria-label="Ações">
+                                <a href="{{url_for('filme_unico',id=item.id)}}" class="btn btn-primary mx-1">Detalhar</a> 
+                                <a href="{{url_for('analise',id_categoria = item.id_categoria , id=item.id)}}" class="btn btn-success mx-1">Avaliar</a> 
+                            </div>
+                        {% else %}
+                            <h5 class="card-title"><strong>Nome do Jogo:</strong> {{item.nome}}</h5>
+                            <p class="card-text"><strong>Descrição:</strong> {{item.descricao[:100]}}</p>
+                            <p class="card-text"><strong>Data de Lançamento:</strong> {{item.data_lancamento}}</p>
+                            <div class="btn-group" role="group" aria-label="Ações">
+                                <a href="{{url_for('jogo_unico',id=item.id)}}" class="btn btn-primary mx-1">Detalhar</a>  
+                                <a href="{{url_for('analise',id_categoria = item.id_categoria ,id=item.id)}}" class="btn btn-success mx-1">Avaliar</a>  
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div> 
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+</script>
+{% endblock %}

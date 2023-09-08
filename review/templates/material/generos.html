@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% from "_formularioajuda.html" import render_field %}
+<div class="container mt-4">
+    <form action="" method="POST" class="mb-4">
+        {% for field in form %}
+            <div class="mb-3 form-group">
+                {{ render_field(field, class="form-control") |safe }}
+            </div>
+            <div class="mb-3">
+                <label for="categoria_select" class="form-label">Selecione uma categoria:</label>
+                <select id="categoria_select" name="categoria" class="form-select">
+                    {% for categoria in categorias %}
+                        <option value="{{ categoria.id }}" class="text-capitalize">{{ categoria.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Criar</button>
+    </form>
+
+    <hr>
+
+    <form action="" method="POST" class="mb-4">
+        <div class="form-group">
+            <label for="filtro_categoria">Filtrar por categoria:</label>
+            <select id="filtro_categoria" name="filtro_categoria" class="form-control">
+                <option value="">Todas as Categorias</option>
+                {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="filtro_nome">Filtrar por nome:</label>
+            <input type="text" id="filtro_nome" name="filtro_nome" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Pesquisar</button>
+    </form>
+    {% if filtro and generos_filtrados==[] %}
+        <h4>Resultado da Pesquisa: {{filtro}} / {{categoria_especifica}}</h4>
+        <h5>Sem resultados para sua busca!</h5>
+    {% else %}
+        {% if generos_filtrados %}
+            <h4>Resultado da Pesquisa: {{filtro}} / {{categoria_especifica}}</h4>
+            {% for genero in generos_filtrados %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ genero.nome }}</h4>
+                        <h4 class="card-title">Categoria: {{ genero.categoria.nome }}</h4>
+                        <a href="{{url_for('generos_atualizar', id=genero.id)}}" class="btn btn-info">Atualizar Genero</a>
+                        <a href="{{url_for('generos_excluir', id=genero.id)}}" class="btn btn-danger">Excluir Genero</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            {% for genero in generos_filme %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ genero.nome }}</h4>
+                            <h4 class="card-title">Categoria: {{ genero.categoria.nome }}</h4>
+                            <a href="{{url_for('generos_atualizar', id=genero.id)}}" class="btn btn-info">Atualizar Genero</a>
+                            <a href="{{url_for('generos_excluir', id=genero.id)}}" class="btn btn-danger">Excluir Genero</a>
+                        </div>
+                    </div>
+
+            
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+    
+</div>
+{% endblock %}

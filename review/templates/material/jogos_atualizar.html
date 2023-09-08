@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center p-2">Atualizar Jogo</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form method="post" action="" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="generoSelect" class="form-label">Selecione o Gênero</label>
+                    <select id="generoSelect" class="form-select" name="genero">
+                        <option value="{{ jogo.id_genero }}">{{ jogo.generos.nome }}</option>
+                        {% for genero in generos %}
+                            {% if genero.id != jogo.id_genero %}
+                                <option value="{{ genero.id }}">{{ genero.nome }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="nome">Nome</label>
+                    <input type="text" name="nome" id="nome" class="form-control" value="{{ jogo.nome }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="nome">Desenolvedora</label>
+                    <input type="text" name="desenvolvedora" id="desenvolvedora" class="form-control" value="{{ jogo.desenvolvedora }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="nome">Descrição</label>
+                    <input type="text" name="descricao" id="descricao" class="form-control" value="{{ jogo.descricao }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="data_lancamento">Data de Lançamento</label>
+                    <input type="date" name="data_lancamento" id="data_lancamento" class="form-control" value="{{ jogo.data_lancamento }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="nome">Tempo de jogo</label>
+                    <input type="text" name="tempo_de_jogo" id="tempo_de_jogo" class="form-control" value="{{ jogo.tempo_de_jogo }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="foto_perfil">Foto Poster</label>
+                    <div class="d-flex align-items-center">
+                        <img src="{{ url_for('static', filename='images/' + jogo.foto_poster) }}" width="60" height="50" alt="" class="mr-3">
+                        <div class="custom-file">
+                            <input type="file" name="foto_poster" id="foto_poster" class="custom-file-input">
+                            <label class="custom-file-label" for="foto_poster">Escolher nova foto Poster</label>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted">Clique para selecionar uma nova imagem e trocar a atual.</small>
+                </div>
+                
+                <div class="text-center">
+                    <button type="submit" class="btn btn-info">Atualizar Jogo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

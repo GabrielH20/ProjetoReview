@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center vh-20">
+    <div class="col-md-6">
+        <h2 class="text-center p-2">Cadastrar Usuário</h2>
+        {% from "_formularioajuda.html" import render_field %}
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                {% for field in form %}
+                    {% if field.type == "FileField" %}
+                        <div class="mb-3">
+                            {{ render_field(field, class="form-control-file") }}
+                        </div>
+                    {% else %}
+                        <div class="mb-3">
+                            {{ render_field(field, class='form-control', placeholder=field.label.text) }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-info btn-block">Cadastrar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

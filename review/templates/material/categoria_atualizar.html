@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <form action="" method="POST" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome:</label>
+            <input type="text" class="form-control" id="nome" name="nome" value="{{categoria.nome}}" placeholder="Digite o nome da categoria" required>
+            <div class="invalid-feedback">Por favor, preencha o nome.</div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="descricao" class="form-label">Descrição:</label>
+            <textarea class="form-control" id="descricao" name="descricao" rows="13" placeholder="Digite a descrição da categoria" required>{{categoria.descricao}}</textarea>
+            <div class="invalid-feedback">Por favor, preencha a descrição.</div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Atualizar</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{{ url_for('static', filename='/images/' + analise.autor_analise.foto_perfil) }}" alt="{{ analise.autor_analise.nome }}" class="img-fluid rounded-circle" height="30" width="30">
+                        <a href="{{ url_for('conta', id=analise.autor_analise.id) }}" class="ml-2 font-weight-bold">{{ analise.autor_analise.nome }}</a>
+                    </div>
+                    <p class="card-text">ID da Análise: {{ analise.id }}</p>
+                    <p class="card-text">Nota: {{ analise.nota }}</p>
+                    <p class="card-text">Análise: {{ analise.analise }}</p>
+                    {% if current_user.id == analise.id_autor_analise %}
+                    <a href="{{url_for('analise_editar', id = analise.id)}}" class="btn btn-warning">Editar</a>
+                    <a href="{{url_for('analise_excluir', id = analise.id )}}" class="btn btn-danger">Excluir</a>
+                    {% endif %}
+
+                    {% if analise.categoria.nome == 'Filmes'%}
+                        <a href="{{url_for('filme_unico', id = analise.id_material)}}"  class="btn btn-secondary">Voltar</a>
+                    {% elif analise.categoria.nome == 'Jogos' %}
+                        <a href="{{url_for('jogo_unico', id = analise.id_material)}}" class="btn btn-secondary">Voltar</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="user-list">
+        {% for usuario in usuarios %}
+            <div class="user-card card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-2">
+                        <img class="user-profile-image img-fluid" src="{{ url_for('static', filename= 'images/'+ usuario.foto_perfil) }}" alt="Profile Image">
+                    </div>
+                    <div class="col-md-10">
+                        <div class="card-body">
+                            <h2 class="card-title user-name">{{ usuario.nome }}</h2>
+                            <p class="card-text user-username">{{ usuario.nome_usuario }}</p>
+                            <p class="card-text user-email">{{ usuario.email }}</p>
+                            <p class="card-text user-birthday">{{ usuario.data_aniversario }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

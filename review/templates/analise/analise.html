@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{url_for('static', filename = '/images/' + material.foto_poster)}}" alt="" height="400" width="330">
+            <h5>Nome: {{material.nome}}</h5>
+            {% if tipo=='Filme'%}
+                <p>Sinopse: {{material.sinopse[:50]}}</p>
+                <p>{{material.sinopse[50:100]}}</p>
+            {% else %}
+                <p>Descrição: {{material.descricao[:50]}}</p>
+                <p>{{material.descricao[50:100]}}...</p>
+            {% endif %}
+            <p>Data de Lançamento: {{material.data_lancamento}}</p>
+        </div>
+        <div class="col-md-8">
+            <h2>Análise</h2>
+            <form method="POST" action="">
+                {% from "_formularioajuda.html" import render_field %}
+                {% for field in form %}
+                <div class="form-group">
+                    {{ render_field(field, class="form-control", rows="20") }}
+                </div>
+                {% endfor %}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                    {% if material.categoria.nome == 'Filmes'%}
+                        <a href="{{ url_for('filme_unico', id = material.id ) }}" class="btn btn-secondary">Cancelar</a>
+                    {% elif material.categoria.nome == 'Jogos' %}
+                        <a href="{{url_for('jogo_unico', id = material.id )}}" class="btn btn-secondary">Cancelar</a>
+                    {% endif%}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

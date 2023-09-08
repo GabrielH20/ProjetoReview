@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{ url_for('static', filename='/images/' + jogo.foto_poster) }}" alt="Poster do Jogo" class="img-fluid">
+        </div>
+        <div class="col-md-8">
+            <h1>Detalhes do Jogo: {{ jogo.nome }}</h1>
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Nome:</strong> {{ jogo.nome }}</li>
+                <li class="list-group-item"><strong>Desenvolvedora:</strong> {{ jogo.desenvolvedora }}</li>
+                <li class="list-group-item"><strong>Data de Lançamento:</strong> {{ jogo.data_lancamento }}</li>
+                <li class="list-group-item"><strong>Tempo de Jogo:</strong> {{ jogo.tempo_de_jogo }} Horas</li>
+                <li class="list-group-item"><strong>Categoria:</strong> {{ jogo.categoria.nome }}</li>
+                <li class="list-group-item"><strong>Gênero:</strong> {{ jogo.generos.nome }}</li>
+                {% if quantidade_analises%}
+                    <li class="list-group-item"><strong>Quantidade Análises:</strong> {{ quantidade_analises }}</li>
+                    <li class="list-group-item"><strong>Nota do Público:</strong> {{ nota_total }} / 100</li>
+                {% else %}
+                    <li class="list-group-item"><strong>Quantidade Análises:</strong> NÃO HÁ ANÁLISES PUBLICADAS</li>
+                    <li class="list-group-item"><strong>Nota do Público:</strong>  NÃO HÁ ANÁLISES PUBLICADAS</li>
+                {% endif %}
+                <li class="list-group-item"><strong>Descrição:</strong> 
+                    <textarea class="form-control" rows="5" readonly>{{ jogo.descricao }}</textarea>
+                </li>
+
+            
+            </ul>
+            {% if current_user.role == 'admin' %}
+            <div class="mt-3">
+                <a href="{{ url_for('jogos_atualizar', id=jogo.id) }}" class="btn btn-primary">Atualizar</a>
+                <a href="{{ url_for('jogos_excluir', id=jogo.id) }}" class="btn btn-danger ml-2">Excluir</a>
+                <br>
+            {% else %}
+                <br>
+                <a href="{{ url_for('analise', id_categoria = jogo.id_categoria, id = jogo.id ) }}" class="btn btn-success ml-2">Avaliar</a>
+                <a href="{{ url_for('home') }}" class="btn btn-secondary ml-2">Voltar</a>
+                <br>
+            {% endif %}
+            </div>
+            <br>
+            
+            {% if analises %}
+                <div class="container">
+                    <div class="row">
+                        {% for analise in analises %}
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <img src="{{ url_for('static', filename='/images/' + analise.autor_analise.foto_perfil) }}" alt="{{ analise.autor_analise.nome }}" class="img-fluid rounded-circle" height="30" width="30">
+                                            <a href="{{url_for('conta', id = analise.autor_analise.id )}}" class="ml-2 font-weight-bold">{{ analise.autor_analise.nome }} </a>
+                                            <a href="{{ url_for('like', id=analise.id) }}" >Like ({{ analise.likes }})</a>
+                                            <a href="" >Dislike ({{ analise.dislikes }})</a>
+                                        </div>
+                                        <h5 class="card-title">Nota: {{ analise.nota }}</h5>
+                                        <p class="card-text">Análise: {{ analise.analise[:300] }}</p>
+                                        <a href="{{url_for('analise_detalhar', id = analise.id )}}" class="btn btn-primary">Detalhar</a>
+                                        {% if analise.id_autor_analise == current_user.id %}
+                                            <a href="{{url_for('analise_editar', id = analise.id)}}" class="btn btn-warning">Editar</a>
+                                            <a href="{{url_for('analise_excluir', id = analise.id )}}" class="btn btn-danger">Excluir</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+        
+        </div>
+    </div>
+</div>
+{% endblock %}

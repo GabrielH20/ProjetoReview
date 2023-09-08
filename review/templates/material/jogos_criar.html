@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% from "_formularioajuda.html" import render_field %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3 class="text-center">Cadastro de Jogos</h3>
+            
+            <form method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="generoSelect" class="form-label">Selecione o Gênero</label>
+                    <select id="generoSelect" class="form-select" name="genero">
+                        {% for genero in generos %}
+                            <option value="{{ genero.id }}">{{ genero.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                {% for field in form %}
+                    {% if field.type == "FileField" %}
+                    <div class="mb-3">
+                        <h3>Poster</h3>
+                        <input type="file" class="form-control" name="poster">
+                    </div>
+                    {% else  %}
+                    <div class="mb-3">
+                        {{ render_field(field, class='form-control', placeholder=field.label.text) }}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                
+                
+                <button type="submit" class="btn btn-info btn-block">Cadastrar Jogo</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

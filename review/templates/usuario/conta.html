@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{ url_for('static', filename='/images/' + usuario.foto_perfil) }}" alt="Foto de Perfil" class="img-fluid rounded-circle">
+        </div>
+        <div class="col-md-8">
+            <h1>Bem-vindo(a) ao seu painel de controle, {{ usuario.nome }}!</h1>
+            <p>Aqui estão os detalhes da sua conta:</p>
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Nome:</strong> {{ usuario.nome }}</li>
+                <li class="list-group-item"><strong>Nome Usuário:</strong> {{ usuario.nome_usuario}}</li>
+                <li class="list-group-item"><strong>Email:</strong> {{ usuario.email }}</li>
+                <li class="list-group-item"><strong>Data de Aniversário:</strong> {{ usuario.data_aniversario }}</li>
+            </ul>
+            {% if current_user.id == usuario.id %}
+            <div class="mt-3">
+                <a href="{{url_for('conta_atualizar')}}" class="btn btn-primary">Atualizar</a>
+                <a href="{{url_for('conta_excluir')}}" class="btn btn-danger ml-2">Excluir</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-secondary ml-2">Deslogar</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
