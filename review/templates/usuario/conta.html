@@ -20,9 +20,47 @@
                 <a href="{{url_for('conta_atualizar')}}" class="btn btn-primary">Atualizar</a>
                 <a href="{{url_for('conta_excluir')}}" class="btn btn-danger ml-2">Excluir</a>
                 <a href="{{ url_for('logout') }}" class="btn btn-secondary ml-2">Deslogar</a>
-            </div>
             {% endif %}
+                <a href="{{ url_for('conta_graficos', id = usuario.id) }}" class="btn btn-success ml-2">Gráficos Análises</a>
+            </div>
         </div>
+        {% if analises %}
+        <div class="container">
+            <br>
+            <br>
+                    <h3>Análises Publicadas</h3>
+                    {% if quantidade_analises != 0  %}
+                    <h5>Quantidade de Análises Publicadas: {{quantidade_analises}}</h5>
+                    {% endif %}
+                    <div class="row">
+                        {% for analise in analises %}
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <img src="{{ url_for('static', filename='/images/' + analise.autor_analise.foto_perfil) }}" alt="{{ analise.autor_analise.nome }}" class="img-fluid rounded-circle" height="30" width="30">
+                                            <a href="{{url_for('conta', id = analise.autor_analise.id )}}" class="ml-2 font-weight-bold">{{ analise.autor_analise.nome }}</a>
+                                        </div>
+                                        <h5 class="card-title">Nota: {{ analise.nota }}</h5>
+                                        <p class="card-text">Análise: {{ analise.analise[:300] }}</p>
+                                        {% if analise.categoria.nome == 'Filmes' %}
+                                            <a href="{{url_for('filme_unico', id = analise.id_material )}}" class="btn btn-primary">Ver Filme</a>
+                                        {% elif analise.categoria.nome == 'Jogos' %}
+                                            <a href="{{url_for('jogo_unico', id = analise.id_material )}}" class="btn btn-primary">Ver Jogo</a>
+                                        {% endif %}
+                                        {% if analise.id_autor_analise == current_user.id %}
+                                            <a href="{{url_for('analise_editar', id = analise.id)}}" class="btn btn-warning">Editar</a>
+                                            <a href="{{url_for('analise_excluir', id = analise.id )}}" class="btn btn-danger">Excluir</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <h1>Não há análises publicadas</h1>
+            {% endif %}
     </div>
 </div>
 {% endblock %}

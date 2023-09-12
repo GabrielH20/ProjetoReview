@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container text-center">
+    <a href="{{url_for('conta', id = usuario.id)}}" class="btn btn-primary">Voltar</a>
+    <h1>Análises em Geral</h1>
+    <img src="data:image/png;base64,{{ analises_geral_img }}" alt="Gráfico de Pizza" class="img-fluid">
+    <h5 class="mt-4">Quantidade Análises : {{quantidade_analises}}</h5>
+    <h5 >Nota Média : {{nota_geral}} </h5>
+    <h5>Análises Filmes: {{quantidade_filmes}}</h5>
+    <h5>Análises Jogos: {{quantidade_jogos}}</h5>
+
+    <hr>
+    {% if quantidade_filmes %}
+    <img src="data:image/png;base64,{{ img_generos_filmes }}" alt="Gráfico de Pizza" class="img-fluid">
+    <h5 class="mt-4">Quantidade Análises Filme : {{quantidade_filmes}}</h5>
+    <h5>Filmes Nota Média: {{nota_filmes}}</h5>
+    {% else %}
+        <h5>Não há filmes analisados</h5>
+    {% endif %}
+
+    <hr>
+    {% if quantidade_jogos%}
+    <h1>Análises Jogos</h1>
+    <img src="data:image/png;base64,{{ img_generos_jogos }}" alt="Gráfico de Pizza" class="img-fluid">
+    <h5 class="mt-4">Quantidade Análises Jogos : {{quantidade_jogos}}</h5>
+    <h5>Filmes Nota Média: {{nota_jogos}}</h5>
+    {% else %}
+        <h5>Não há jogos analisados</h5>
+    {% endif %}
+</div>
+{% endblock %}

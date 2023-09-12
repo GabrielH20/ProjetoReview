@@ -4,12 +4,15 @@ from flask_bcrypt import check_password_hash
 
 from .forms import FormularioRegistro, FormularioLogin
 from .models import UsuarioDb
+from .helpers import analises_geral, analises_filmes, analises_jogos
 
 from review.material.models import Filme,Jogos,Generos,Categoria
-from review.admin.helpers import filtrar_material,comparar_por_data_recente
 
+from review.analise.models import Analise
 
 from review.admin.routes import load_user
+from review.admin.helpers import filtrar_material,comparar_por_data_recente
+
 from review import app,db,photos, bcrypt, login_manager
 
 from functools import cmp_to_key
@@ -114,11 +117,18 @@ def lista_usuarios():
 @app.route('/conta/<int:id>', methods = ['GET','POST'])
 def conta(id):
     usuario = UsuarioDb.query.filter_by(id = id).first()
+
+    analises = Analise.query.filter_by(
+        id_autor_analise =usuario.id
+    ).all()
+
+    quantidade_analises = len(analises)
+
     if not usuario:
         flash('Usuário não encontrado!','danger')
         return redirect(url_for('home'))
     
-    return render_template('usuario/conta.html', usuario = usuario)
+    return render_template('usuario/conta.html', usuario = usuario, analises = analises, quantidade_analises = quantidade_analises)
 
 
 @app.route('/conta/atualizar', methods = ['GET','POST'])
@@ -179,6 +189,46 @@ def conta_excluir():
     
     flash('A conta foi deletada com Sucesso','success')
     return redirect(url_for('login'))
+
+@app.route('/conta/<int:id>/graficos', methods = ['GET','POST'])
+def conta_graficos(id):
+    title = "Gráficos da Conta"
+
+    analises = Analise.query.filter_by(id_autor_analise = id).all()
+
+    usuario = UsuarioDb.query.filter_by(id = id).first()
+
+    if len(analises) != 0:
+        nota_geral = round(sum([analise.nota for analise in analises])/len(analises))
+    else:
+        nota_geral = 0
+
+    categoria_filme = Categoria.query.filter_by(nome = 'Filmes').first()
+    categoria_jogos = Categoria.query.filter_by(nome = 'Jogos').first()
+
+    filmes = Analise.query.filter_by(id_autor_analise = id, id_categoria = categoria_filme.id).all()
+
+    if len(filmes) != 0:
+        nota_filmes = round(sum([analise.nota for analise in filmes])/len(filmes))
+    else:
+        nota_filmes = 0
+    
+    jogos = Analise.query.filter_by(id_autor_analise = id, id_categoria = categoria_jogos.id).all()
+
+    if len(jogos) != 0:
+        nota_jogos = round(sum([analise.nota for analise in jogos])/ len(jogos))
+    else:
+        nota_jogos = 0
+
+    analises_geral_img = analises_geral(jogos, filmes)
+
+    img_generos_filmes = analises_filmes(filmes)
+
+    img_generos_jogos = analises_jogos(jogos)
+
+    return render_template('usuario/graficos.html', title = title, analises_geral_img = analises_geral_img, img_generos_filmes = img_generos_filmes, img_generos_jogos = img_generos_jogos,
+                           quantidade_jogos = len(jogos), quantidade_filmes = len(filmes), quantidade_analises = len(analises),
+                           nota_geral = nota_geral, nota_filmes = nota_filmes, nota_jogos = nota_jogos, usuario = usuario)
 
 @app.route('/logout', methods = ['GET','POST'])
 def logout():
