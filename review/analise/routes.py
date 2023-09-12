@@ -2,7 +2,7 @@ from flask import redirect, render_template, url_for, flash, request, current_ap
 from flask_login import login_required, login_user, current_user, logout_user
 
 from .forms import FormAnalise
-from .models import Analise, Comentario
+from .models import Analise, Comentario, ComentarioFilho
 from .helpers import redirecionar_material_unico, verificar_material
 
 from review.material.models import Categoria, Filme, Jogos
@@ -67,11 +67,13 @@ def analise_detalhar(id):
 
     comentarios = Comentario.query.filter_by(id_analise_comentada = id).all()
 
+    comentarios_filhos = ComentarioFilho.query.filter_by().all()
+
     if not analise:
         flash('Análise não encontrda','danger')
         return redirect('home')
     
-    return render_template('analise/analise_detalhada.html', analise = analise, title = title, comentarios = comentarios)
+    return render_template('analise/analise_detalhada.html', analise = analise, title = title, comentarios = comentarios, comentarios_filhos = comentarios_filhos)
 
 @app.route('/analise/excluir/<int:id>', methods = ['GET'])
 @login_required
@@ -198,6 +200,71 @@ def comentario_excluir(id):
 
     return redirect(url_for('analise_detalhar', id = comentario.id_analise_comentada))
 
+@app.route('/comentario/filho/<int:id_comentario_pai>', methods = ['GET','POST'])
+@login_required
+def comentario_filho_criar(id_comentario_pai):
+    title = 'Comentário Filho'
+    comentario_pai = Comentario.query.filter_by(id = id_comentario_pai).first()
+
+    if request.method == 'POST':
+        comentario_usuario = request.form.get('comentario_filho')
+
+        comentario_filho = ComentarioFilho(
+            comentario = comentario_usuario,
+            autor_comentario_filho = current_user,
+            comentario_pai = comentario_pai
+        )
+
+        db.session.add(comentario_filho)
+        db.session.commit()
+
+        flash('Comentário respondido com sucesso!','success')
+
+        return redirect(url_for('analise_detalhar', id = comentario_pai.id_analise_comentada))
+        
+    return render_template('analise/comentario_filho.html', title = title, comentario_pai = comentario_pai)
+
+@app.route('/comentario/filho/excluir/<int:id_comentario_filho>', methods = ['GET'])
+@login_required
+def comentario_filho_excluir(id_comentario_filho):
+    
+    comentario_filho = ComentarioFilho.query.filter_by(id = id_comentario_filho).first()
+
+    if comentario_filho == None:
+        flash('Erro ao excluir análise','danger')
+        return redirect(url_for('home'))
+
+    if comentario_filho.id_autor_comentario_filho != current_user.id:
+        flash('Erro ao excluir análise','danger')
+        return redirect(url_for('home'))
+    
+    analise_id = comentario_filho.comentario_pai.id_analise_comentada
+
+    db.session.delete(comentario_filho)
+    db.session.commit()
+
+    flash('Resposta excluida com sucesso!','success')
+
+    return redirect(url_for('analise_detalhar', id = analise_id))
+
+@app.route('/comentario/filho/editar/<int:id_comentario_filho>', methods = ['GET','POST'])
+@login_required
+def comentario_filho_editar(id_comentario_filho):
+    comentario_filho = ComentarioFilho.query.filter_by(id = id_comentario_filho).first()
+    comentario = Comentario.query.filter_by(id = comentario_filho.id_comentario_pai).first()
+
+    if request.method == 'POST':
+        comentario_usuario = request.form.get('comentario_filho')
+
+        comentario_filho.comentario = comentario_usuario
+
+        db.session.commit()
+
+        flash('Comentário editado com sucesso!','success')
+
+        return redirect(url_for('analise_detalhar', id = comentario.id_analise_comentada))
+    
+    return render_template('analise/comentario_filho_editar.html', comentario_filho = comentario_filho, comentario = comentario)
 @app.route('/like/<int:id>', methods = ['GET','POST'])
 @login_required
 def like(id):

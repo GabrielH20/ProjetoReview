@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container text-center">
+  <img src="{{ url_for('static', filename='/images/' + comentario_pai.autor_comentario.foto_perfil) }}" alt="" class="img-fluid rounded-circle" width="100">
+  <h3>{{ comentario_pai.autor_comentario.nome }}</h3>
+  <div class="form-group">
+    <textarea name="comentario" id="comentario" class="form-control" cols="30" rows="5" maxlength="300" readonly>{{ comentario_pai.comentario_usuario }}</textarea>
+  </div>
+  <br>
+  <h4>Responder</h4>
+</div>
+<form action="" method="POST">
+  <div class="container text-center">
+    <div class="form-group">
+      <textarea name="comentario_filho" id="comentario_filho" cols="30" rows="10" placeholder="Digite sua Resposta ao comentário"  class="form-control" maxlength="300"></textarea>
+      <br>
+      <span id="caracteres-restantes">300 caracteres restantes</span>
+      <br>
+      <button type="submit" class="btn btn-primary">Responder</button>
+    </div>
+  </div>
+</form>
+
+<script>
+  const comentarioFilhoTextArea = document.getElementById('comentario_filho');
+  const caracteresRestantes = document.getElementById('caracteres-restantes');
+
+  comentarioFilhoTextArea.addEventListener('input', () => {
+    const maxLength = 300;
+    const currentLength = comentarioFilhoTextArea.value.length;
+    const remainingLength = maxLength - currentLength;
+
+    caracteresRestantes.textContent = `${remainingLength} caracteres restantes`;
+
+    if (remainingLength < 0) {
+      comentarioFilhoTextArea.value = comentarioFilhoTextArea.value.slice(0, maxLength);
+      caracteresRestantes.textContent = '0 caracteres restantes';
+    }
+  });
+</script>
+{% endblock %}

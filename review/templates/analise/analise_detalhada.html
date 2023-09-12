@@ -44,44 +44,58 @@
     </div>
 </div>
 
-
-
 {% if comentarios %}
-
-<div class="container mt-3">
-    <h2 class="mt-4">Comentários</h2>
-    <div class="row">
-        <div class="col-md-8">
-            {% for comentario in comentarios %}
-            <div class="media mb-4">
-                <img src="{{ url_for('static', filename='/images/' + comentario.autor_comentario.foto_perfil) }}" alt="{{ comentario.autor_comentario.nome }}" class="mr-3 rounded-circle" height="50" width="50">
-                <div class="media-body">
-                    <h6 class="mt-0">{{ comentario.autor_comentario.nome }}</h6>
-                    <p>{{ comentario.comentario_usuario[:150] }}</p>
-                    <p>{{ comentario.comentario_usuario[150:300] }}</p>
-                    {% if current_user.id == comentario.autor_comentario.id %}
-                    <div class="btn-group">
-                        <a href="{{url_for('comentario_editar', id=comentario.id)}}" class="btn btn-sm btn-secondary">Editar </a> 
-                        <a href="{{url_for('comentario_excluir', id=comentario.id)}}" class="btn btn-sm btn-danger">Excluir</a>
+    <div class="container mt-3">
+        <h2 class="mt-4">Comentários</h2>
+        <div class="row">
+            <div class="col-md-8">
+                {% for comentario in comentarios %}
+                <div class="media mb-4">
+                    <img src="{{ url_for('static', filename='/images/' + comentario.autor_comentario.foto_perfil) }}" alt="{{ comentario.autor_comentario.nome }}" class="mr-3 rounded-circle" height="40" width="40">
+                    <div class="media-body pl-3">
+                        <h6 class="mt-0">{{ comentario.autor_comentario.nome }}</h6>
+                        <p>{{ comentario.comentario_usuario[:150]}}</p>
+                        <p>{{ comentario.comentario_usuario[150: ]}}</p>
+                        {% if current_user.id == comentario.autor_comentario.id %}
+                        <div class="btn-group">
+                            <a href="{{url_for('comentario_editar', id=comentario.id)}}" class="btn btn-sm btn-secondary">Editar</a> 
+                            <a href="{{url_for('comentario_excluir', id=comentario.id)}}" class="btn btn-sm btn-danger">Excluir</a>
+                        </div>
+                        {% endif %}
+                        <a href="{{url_for('comentario_filho_criar', id_comentario_pai = comentario.id )}}" class="btn btn-sm btn-primary">Responder</a>
                     </div>
-                    {% endif %}
-                    <a href="#" class="btn btn-sm btn-primary">Responder</a>
                 </div>
+                <div class="comentarios-filhos pl-5">
+                    {% for comentario_filho in comentarios_filhos %}
+                    {% if comentario_filho.id_comentario_pai == comentario.id %}
+                        <h5 class="pl-3">Respostas:</h5>
+                            <div class="media mb-2">
+                                <img src="{{url_for('static', filename = '/images/' + comentario_filho.autor_comentario_filho.foto_perfil)}}" alt="{{ comentario_filho.autor_comentario_filho.nome }}" class="mr-3 rounded-circle" height="30" width="30">
+                                <div class="media-body pl-2">
+                                    <h6 class="mt-0">{{ comentario_filho.autor_comentario_filho.nome }}</h6>
+                                    <p>{{comentario_filho.comentario[:150]}}</p>
+                                    <p>{{comentario_filho.comentario[150:]}}</p>
+                                    <div class="mt-2"> 
+                                        {% if comentario_filho.id_autor_comentario_filho == current_user.id %}
+                                            <a href="{{url_for('comentario_filho_editar', id_comentario_filho = comentario_filho.id )}}" class="btn btn-sm btn-secondary mr-2">Editar</a>
+                                            <a href="{{url_for('comentario_filho_excluir', id_comentario_filho = comentario_filho.id )}}" class="btn btn-sm btn-danger">Excluir</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                
+                <hr>
+                {% endfor %}
             </div>
-            <hr>
-
-            {% endfor %}
-
         </div>
     </div>
-</div>
-
-{% else %}
-
-<div class="container text-center mt-4">
-    <h4>Seja o primeiro a comentar!</h4>
-</div>
-
+    {% else %}
+        <div class="container text-center mt-4">
+            <h4>Seja o primeiro a comentar!</h4>
+        </div>
 {% endif %}
 
 <script>

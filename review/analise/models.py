@@ -32,5 +32,18 @@ class Comentario(db.Model):
     
     data_publi = db.Column(db.Date, default = datetime.utcnow())
 
+class ComentarioFilho(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    
+    comentario = db.Column(db.String(300), nullable = False)
+
+    id_autor_comentario_filho = db.Column(db.Integer, db.ForeignKey('usuario_db.id'))
+    autor_comentario_filho = db.relationship('UsuarioDb', backref=db.backref('comentario_filho', lazy=True) )
+
+    id_comentario_pai = db.Column(db.Integer, db.ForeignKey('comentario.id'))
+    comentario_pai = db.relationship('Comentario', backref=db.backref('comentario_filho', lazy=True))
+
+    data_publi = db.Column(db.Date, default = datetime.utcnow())
+
 with app.app_context():
     db.create_all()
