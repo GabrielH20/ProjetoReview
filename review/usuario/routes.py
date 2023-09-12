@@ -8,7 +8,7 @@ from .helpers import analises_geral, analises_filmes, analises_jogos
 
 from review.material.models import Filme,Jogos,Generos,Categoria
 
-from review.analise.models import Analise
+from review.analise.models import Analise, Comentario, ComentarioFilho
 
 from review.admin.routes import load_user
 from review.admin.helpers import filtrar_material,comparar_por_data_recente
@@ -184,6 +184,38 @@ def conta_excluir():
         pass  
     
     usuario = UsuarioDb.query.get(current_user.id)
+
+    analises = Analise.query.filter_by(id_autor_analise = usuario.id).all()
+
+    for analise in analises:
+        comentarios = Comentario.query.filter_by(id_analise_comentada = analise.id)
+
+        for comentario in comentarios:
+
+            comentarios_filhos = ComentarioFilho.query.filter_by(id_comentario_pai = comentario.id).all()
+
+            for comentario_filho in comentarios_filhos:
+                db.session.delete(comentario_filho)
+
+            db.session.delete(comentario)
+
+        db.session.delete(analise)
+
+    comentarios = Comentario.query.filter_by(id_autor_comentario = usuario.id).all()
+    for comentario in comentarios:
+        comentarios_filhos = ComentarioFilho.query.filter_by(id_comentario_pai = comentario.id).all()
+
+        for comentario_filho in comentarios_filhos:
+
+            db.session.delete(comentario_filho)
+
+        db.session.delete(comentario)
+    
+    comentarios_filhos = ComentarioFilho.query.filter_by(id_autor_comentario_filho = usuario.id).all()
+
+    for comentario_filho in comentarios_filhos:
+        db.session.delete(comentario_filho)
+
     db.session.delete(usuario)
     db.session.commit()
     

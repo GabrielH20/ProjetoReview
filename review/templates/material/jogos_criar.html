@@ -10,11 +10,14 @@
             <form method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="generoSelect" class="form-label">Selecione o Gênero</label>
+
                     <select id="generoSelect" class="form-select" name="genero">
                         {% for genero in generos %}
                             <option value="{{ genero.id }}">{{ genero.nome }}</option>
                         {% endfor %}
+                        
                     </select>
+
                 </div>
                 
                 {% for field in form %}

@@ -89,6 +89,14 @@ def analise_excluir(id):
 
     material = redirecionar_material_unico(analise)
     
+    comentarios = Comentario.query.filter_by(id_analise_comentada = id).all()
+
+    for comentario in comentarios:
+        comentarios_filhos = ComentarioFilho.query.filter_by(id_comentario_pai = comentario.id).all()
+        for comentario_filho in comentarios_filhos:
+            db.session.delete(comentario_filho)
+        db.session.delete(comentario)
+        
     db.session.delete(analise)
     db.session.commit()
 
@@ -184,6 +192,7 @@ def comentario_editar(id):
 @login_required
 def comentario_excluir(id):
     comentario = Comentario.query.filter_by(id = id).first()
+    comentarios_filhos = ComentarioFilho.query.filter_by(id_comentario_pai = id).all()
 
     if comentario.id_autor_comentario != current_user.id:
         flash('Erro ao excluir comentário')
@@ -192,6 +201,8 @@ def comentario_excluir(id):
     if comentario == None:
         flash('Erro ao procurar comentário!','danger')
         return redirect('home')
+    for comentario_filho in comentarios_filhos:
+        db.session.delete(comentario_filho)
 
     db.session.delete(comentario)
     db.session.commit()

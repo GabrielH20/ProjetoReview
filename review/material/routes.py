@@ -7,11 +7,12 @@ from review import app,db, login_manager,photos
 from review.material.forms import FormCategoria, FormGeneros, FormFilme, FormJogos, FormFiltro
 from review.material.models import Categoria, Generos, Filme, Jogos
 
-from review.analise.models import Analise
+from review.analise.models import Analise, Comentario, ComentarioFilho
 
 from datetime import datetime
 import secrets
 import os
+
 @app.route('/jogo/<int:id>', methods = ['GET'])
 def jogo_unico(id):
     jogo = Jogos.query.filter_by(id = id).first()
@@ -54,7 +55,8 @@ def jogos_criar():
 
     form = FormJogos(request.form)
     categoria = Categoria.query.filter_by(nome='Jogos').first()
-    generos = Generos.query.filter_by(id = categoria.id)
+
+    generos = Generos.query.filter_by(id = categoria.id).all()
 
     if request.method == 'POST':
         try:
@@ -66,12 +68,15 @@ def jogos_criar():
             data_lancamento = datetime.strptime(data_lancamento_str, '%Y-%m-%d').date()
 
             genero = request.form.get('genero')
-
             file_poster = request.files.get('poster')
+
             poster = photos.save(file_poster, name = secrets.token_hex(10) + '.')
 
-            jogo = Jogos(nome = nome, desenvolvedora = desenvolvedora, descricao = descricao,data_lancamento = data_lancamento, tempo_de_jogo = tempo_de_jogo,
-                        id_genero = genero,id_categoria = categoria.id, foto_poster= poster)
+            jogo = Jogos(nome = nome, desenvolvedora = desenvolvedora, 
+                         descricao = descricao,data_lancamento = data_lancamento, 
+                         tempo_de_jogo = tempo_de_jogo,
+                        id_genero = genero,
+                        id_categoria = categoria.id, foto_poster= poster)
             
             db.session.add(jogo)
             db.session.commit()
@@ -143,12 +148,28 @@ def jogos_excluir(id):
     
     jogo_excluir = Jogos.query.filter_by(id = id).first()
 
+    analises = Analise.query.filter_by(id_material = id).all()
+
+    for analise in analises:
+        comentarios = Comentario.query.filter_by(id_analise_comentada = analise.id)
+
+        for comentario in comentarios:
+
+            comentarios_filhos = ComentarioFilho.query.filter_by(id_comentario_pai = comentario.id).all()
+
+            for comentario_filho in comentarios_filhos:
+                db.session.delete(comentario_filho)
+
+            db.session.delete(comentario)
+
+        db.session.delete(analise)
+
     db.session.delete(jogo_excluir)
     db.session.commit()
 
     flash('Jogo foi excluido com sucesso','success')
 
-    return redirect(url_for('jogos'))
+    return redirect(url_for('admin_home'))
 
 @app.route('/admin/filmes', methods = ['GET','POST'])
 @login_required
@@ -206,7 +227,6 @@ def filme_criar():
             data_lancamento = datetime.strptime(data_lancamento_str, '%Y-%m-%d').date()
 
             genero = request.form.get('genero')
-
             file_foto_poster = request.files.get('poster')
         
             foto_poster = photos.save(file_foto_poster, name = secrets.token_hex(10) + '.')
@@ -241,7 +261,7 @@ def filme_atualizar(id):
 
     categoria = Categoria.query.filter_by(nome = 'Filmes').first()
 
-    generos = Generos.query.filter_by(id_categoria = categoria.id)
+    generos = Generos.query.filter_by(id_categoria = categoria.id).all()
 
     if request.method == 'POST':
 
@@ -288,13 +308,29 @@ def filme_excluir(id):
         os.unlink(os.path.join(current_app.root_path, 'static/images/' + filme_excluir.foto_poster))
     except:
         pass
+    
+    analises = Analise.query.filter_by(id_material = id).all()
+
+    for analise in analises:
+        comentarios = Comentario.query.filter_by(id_analise_comentada = analise.id)
+
+        for comentario in comentarios:
+
+            comentarios_filhos = ComentarioFilho.query.filter_by(id_comentario_pai = comentario.id).all()
+
+            for comentario_filho in comentarios_filhos:
+                db.session.delete(comentario_filho)
+
+            db.session.delete(comentario)
+
+        db.session.delete(analise)
 
     db.session.delete(filme_excluir)
     db.session.commit()
 
     flash('Filme excluido com sucesso!','success')
 
-    return redirect(url_for('filmes'))
+    return redirect(url_for('admin_home'))
 
 @app.route('/admin/generos/filme',methods = ['GET','POST'])
 @login_required
