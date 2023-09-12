@@ -28,4 +28,79 @@
         </div>
     </div>
 </div>
+
+<div class="container text-center mt-4">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <form action="/analise/{{ analise.id }}/comentario" method="post">
+                <div class="form-group">
+                    <label for="comentario">Adicione seu comentário</label>
+                    <textarea class="form-control" name="comentario" id="comentario" rows="4" placeholder="Digite seu comentário aqui" maxlength="300"></textarea>
+                    <div id="caracteres-restantes">300 caracteres restantes</div>
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+{% if comentarios %}
+
+<div class="container mt-3">
+    <h2 class="mt-4">Comentários</h2>
+    <div class="row">
+        <div class="col-md-8">
+            {% for comentario in comentarios %}
+            <div class="media mb-4">
+                <img src="{{ url_for('static', filename='/images/' + comentario.autor_comentario.foto_perfil) }}" alt="{{ comentario.autor_comentario.nome }}" class="mr-3 rounded-circle" height="50" width="50">
+                <div class="media-body">
+                    <h6 class="mt-0">{{ comentario.autor_comentario.nome }}</h6>
+                    <p>{{ comentario.comentario_usuario[:150] }}</p>
+                    <p>{{ comentario.comentario_usuario[150:300] }}</p>
+                    {% if current_user.id == comentario.autor_comentario.id %}
+                    <div class="btn-group">
+                        <a href="{{url_for('comentario_editar', id=comentario.id)}}" class="btn btn-sm btn-secondary">Editar </a> 
+                        <a href="{{url_for('comentario_excluir', id=comentario.id)}}" class="btn btn-sm btn-danger">Excluir</a>
+                    </div>
+                    {% endif %}
+                    <a href="#" class="btn btn-sm btn-primary">Responder</a>
+                </div>
+            </div>
+            <hr>
+
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+{% else %}
+
+<div class="container text-center mt-4">
+    <h4>Seja o primeiro a comentar!</h4>
+</div>
+
+{% endif %}
+
+<script>
+    const comentarioTextArea = document.getElementById('comentario');
+    const caracteresRestantes = document.getElementById('caracteres-restantes');
+
+    comentarioTextArea.addEventListener('input', () => {
+        const maxLength = 300;
+        const currentLength = comentarioTextArea.value.length;
+        const remainingLength = maxLength - currentLength;
+
+        caracteresRestantes.textContent = `${remainingLength} caracteres restantes`;
+
+        if (remainingLength < 0) {
+            caracteresRestantes.style.color = 'red'; 
+        } else {
+            caracteresRestantes.style.color = ''; 
+        }
+    });
+</script>
+
 {% endblock %}

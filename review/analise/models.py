@@ -19,5 +19,18 @@ class Analise(db.Model):
 
     data_publi = db.Column(db.Date, default = datetime.utcnow())
 
+class Comentario(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+
+    comentario_usuario = db.Column(db.String(300), nullable = False)
+
+    id_autor_comentario = db.Column(db.Integer, db.ForeignKey('usuario_db.id'))
+    autor_comentario = db.relationship('UsuarioDb', backref=db.backref('comentario', lazy=True))
+
+    id_analise_comentada = db.Column(db.Integer, db.ForeignKey('analise.id'))
+    analise_comentada = db.relationship('Analise', backref=db.backref('comentario', lazy=True))
+    
+    data_publi = db.Column(db.Date, default = datetime.utcnow())
+
 with app.app_context():
     db.create_all()
