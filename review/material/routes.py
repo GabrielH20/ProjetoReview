@@ -54,9 +54,10 @@ def jogos_criar():
     title = 'Jogos Cadastrar'
 
     form = FormJogos(request.form)
+
     categoria = Categoria.query.filter_by(nome='Jogos').first()
 
-    generos = Generos.query.filter_by(id = categoria.id).all()
+    generos = Generos.query.filter_by(id_categoria = categoria.id).all()
 
     if request.method == 'POST':
         try:
@@ -104,7 +105,7 @@ def jogos_atualizar(id):
 
     jogo = Jogos.query.filter_by(id = id).first()
     
-    categoria = Categoria.query.filter_by(nome = 'Filmes').first()
+    categoria = Categoria.query.filter_by(nome = 'Jogos').first()
 
     generos = Generos.query.filter_by(id_categoria = categoria.id)
 
@@ -120,7 +121,7 @@ def jogos_atualizar(id):
             jogo.data_lancamento = datetime.strptime(data_lancamento_str, '%Y-%m-%d').date()
 
             genero = Generos.query.filter_by(id = int(request.form.get('genero'))).first()
-            jogo.id_genero_filme = genero.id
+            jogo.generos = genero
 
             foto_poster = request.files.get('foto_poster')
             if foto_poster:
@@ -275,7 +276,7 @@ def filme_atualizar(id):
             filme.data_lancamento = datetime.strptime(data_lancamento_str, '%Y-%m-%d').date()
 
             genero = Generos.query.filter_by(id = int(request.form.get('genero'))).first()
-            filme.id_genero_filme = genero.id
+            filme.generos = genero
 
             foto_poster = request.files.get('foto_poster')
             if foto_poster:
